@@ -1,71 +1,43 @@
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import CartItem from "../components/CartItem";
 
+import {FcDeleteDatabase} from "react-icons/fc"
+import { useDispatch } from "react-redux";
+import { remove } from "../redux/Slices/CartSlice";
+import { toast } from "react-hot-toast";
 
+const CartItem = ({item, itemIndex}) => {
+  const dispatch = useDispatch();
 
-
-const Cart = () => {
-
-  const {cart} = useSelector((state) => state);
-  console.log("Printing Cart");
-  console.log(cart);
-  const [totalAmount, setTotalAmount] = useState(0);
-
-  useEffect( () => {
-    setTotalAmount( cart.reduce( (acc, curr) => acc + curr.price,0) );
-  }, [cart])
+  const removeFromCart = () => {
+    dispatch(remove(item.id));
+    toast.success("Item Removed");
+  }
 
   return (
-    <div >
-  {
-    cart.length > 0  ? 
-    (<div>
+    <div>
 
+      <div className="flex flex-row justify-center  mx-auto items-center w-6/12">
 
-      <div >
-        {
-          cart.map( (item,index) => {
-            return <CartItem key={item.id} item={item} itemIndex={index} 
-              className="gap-y-11"
-            />
-          } )
-        }
-      </div>
-
-      <div className="mx-auto justify-center items-center mt-10 ">
-
-        <div className="text-2xl">
-          <div className="text-4xl ">Your Cart</div>
-          <div>Summary</div>
-          <p>
-            <span>Total Items: {cart.length}</span>
-          </p>
+        <div >
+          <img src={item.image} />
         </div>
-
         <div>
-          <p>Total Amount: ${totalAmount}</p>
-          <button>
-            CheckOut Now
-          </button>
+          <h1>{item.title}</h1>
+          <h1>{item.description}</h1>
+          <div>
+            <p>{item.price}</p>
+            <div
+            onClick={removeFromCart}>
+              <FcDeleteDatabase/>
+            </div>
+          </div>
+
         </div>
+
 
       </div>
 
-
-    </div>) : 
-    (<div>
-      <h1>Cart Empty</h1>
-      <Link to={"/"}>
-        <button>
-          Shop Now
-        </button>
-      </Link>
-    </div>)
-  }
     </div>
   );
 };
 
-export default Cart;
+export default CartItem;
